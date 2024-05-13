@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors'); 
 require('dotenv').config();
 
 const app = express();
@@ -22,6 +23,8 @@ const linkSchema = new mongoose.Schema({
 const Link = mongoose.model('Link', linkSchema);
 
 app.use(express.json());
+app.use(cors());
+
 
 app.post('/links', async (req, res) => {
   try {
@@ -37,6 +40,32 @@ app.post('/links', async (req, res) => {
   } catch (err) {
     console.error('error adding link:', err);
     res.status(500).json({ error: 'failed to add link' });
+  }
+});
+
+// app.delete('/links/:linkId', async (req, res) => {
+//   try {
+//     const linkId = req.params.linkId;
+//     const deletedLink = await Link.findByIdAndDelete(linkId);
+
+//     if (!deletedLink) {
+//       return res.status(404).json({ error: 'Link not found' });
+//     }
+
+//     res.json(deletedLink);
+//   } catch (error) {
+//     console.error('Error deleting link:', error);
+//     res.status(500).json({ error: 'Failed to delete link' });
+//   }
+// });
+
+app.get('/links', async (req, res) => {
+  try {
+    const links = await Link.find(); 
+    res.json(links);
+  } catch (error) {
+    console.error('Error fetching links:', error);
+    res.status(500).json({ error: 'Failed to fetch links' });
   }
 });
 
